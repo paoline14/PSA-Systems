@@ -43,27 +43,20 @@ Pick one and rename it `index.html`.
 
 ## About the clips
 
-Both have problems worth a look before this is public:
+Both current clips are clean: no generator watermark, and the on-screen text
+reads correctly rather than as the garbled lettering the earlier versions had.
+The small PSA globe in the corner of the room clip still has scrambled text
+around its ring, which is minor at card size but visible if you look.
 
-- **The training room clip carries a "Pika" watermark**, visible at the top
-  left over the PSA globe. That is the generator's mark on an official
-  provincial office page. Re-exporting without it is a paid feature of that
-  tool — worth doing, or worth using different media, rather than editing the
-  watermark out.
-- **Text inside both clips is garbled.** The PSA tagline reads as nonsense
-  rather than "Solid · Responsive · World-class", and on the vehicle clip
-  "Efficient. Safe. Reliable." is mangled. It is legible enough to notice and
-  wrong enough to look careless, which is the worst combination on a
-  government site.
+Posters are the first frame of the room clip and frame 145 of the vehicle clip
+— the vehicle title overlay dissolves partway through, so a late frame gives a
+cleaner still. A card is never blank while its clip loads, and if a clip fails
+to load the poster simply stays.
 
-Neither problem is fixable from my side without either removing another tool's
-watermark or regenerating the media. Hence the second version.
-
-A third option: use real photographs. You already have a good one of the
-training room — it is in the reservation app at
-`public/psa-training-room.jpg`. An equivalent photo of the office vehicles
-would let both cards carry real imagery, which reads better on a government
-page than any illustration.
+`assets/rooms-photo.jpg` is a photograph of the actual room, cropped to the
+card size, kept in case you would rather use a real picture than an
+illustration. To switch, point the room card's `<img>` at it and delete the
+`<video>` line beside it.
 
 ## Files
 
@@ -72,10 +65,8 @@ page than any illustration.
     assets/
       rooms.mp4, rooms-poster.jpg
       vehicle.mp4, vehicle-poster.jpg
+      rooms-photo.jpg          real photo of the room, unused by default
       psa-logo.png, bagong-pilipinas.png
-
-Posters were pulled from frame 20 of each clip, so a card is never blank while
-its clip loads.
 
 ## Notes
 
@@ -86,3 +77,7 @@ its clip loads.
 - Keyboard: cards are focusable, focus ring is visible, and focus starts the
   preview the same way hover does.
 - `prefers-reduced-motion` suppresses the lift and the clips.
+- Both official marks sit either side of the office name rather than at the
+  outer edges of the header. The name block is not `flex: 1`, so the row
+  shrinks to its contents instead of stranding the second mark against the
+  far edge.

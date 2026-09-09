@@ -57,7 +57,7 @@
     gap: 16px;
   }
   .masthead img { height: 64px; width: auto; flex-shrink: 0; }
-  .masthead .names { flex: 1; min-width: 0; }
+  .masthead .names { min-width: 0; }
   .masthead .agency {
     font-size: 12px; font-weight: 500; color: var(--psa-600);
     margin: 0 0 2px;
@@ -276,8 +276,8 @@ document.querySelectorAll(".system").forEach((card) => {
 });
 
 /* Previews play on hover or keyboard focus, not on load. Two clips
-   autoplaying the moment the page opens is motion nobody asked for and
-   data nobody agreed to spend — and on a phone it is both, twice. */
+   autoplaying the moment the page opens is motion nobody asked for and data
+   nobody agreed to spend — and on a phone it is both, twice. */
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 document.querySelectorAll(".system").forEach((card) => {
