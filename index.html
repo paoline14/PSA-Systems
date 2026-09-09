@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Office Systems — PSA Laguna</title>
+<meta name="description" content="Reserve a training room or request a vehicle at the Provincial Statistical Office, Laguna.">
+<meta name="theme-color" content="#153a7d">
+
+<style>
+  /* ------------------------------------------------------------------
+     Same tokens as the two systems this page links to, so arriving at
+     either one from here does not feel like leaving a different site.
+     ------------------------------------------------------------------ */
+  :root {
+    --psa-900: #0a1f45;
+    --psa-800: #0f2c60;
+    --psa-700: #153a7d;
+    --psa-600: #1c4b9c;
+    --psa-200: #b9cdec;
+    --psa-100: #dbe6f6;
+    --psa-50:  #eff4fb;
+    --psa-red: #c8102e;
+    --psa-gold:#fcd116;
+    --paper:   #f1f4f8;
+    --slate-600:#475569;
+    --slate-300:#cbd5e1;
+    --slate-200:#e2e8f0;
+
+    /* No webfont. The two systems run on the system stack so they render
+       on an office machine with no internet, and this page matches. */
+    --font-ui: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-ui);
+    color: var(--psa-900);
+    background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- masthead --- */
+  header { background: #fff; border-bottom: 1px solid var(--slate-200); }
+
+  .masthead {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .masthead img { height: 64px; width: auto; flex-shrink: 0; }
+  .masthead .names { flex: 1; min-width: 0; }
+  .masthead .agency {
+    font-size: 12px; font-weight: 500; color: var(--psa-600);
+    margin: 0 0 2px;
+  }
+  .masthead .office {
+    font-size: 19px; font-weight: 600; line-height: 1.2; margin: 0;
+  }
+
+  /* Blue, red, yellow in flag order. The only ornament on the page. */
+  .flag-rule {
+    height: 4px;
+    background: linear-gradient(to right, var(--psa-700), var(--psa-red), var(--psa-gold));
+  }
+
+  /* --- main --- */
+  main { flex: 1; max-width: 1040px; width: 100%; margin: 0 auto; padding: 44px 24px 56px; }
+
+  h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+  .lede { margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: var(--slate-600); max-width: 58ch; }
+
+  .systems {
+    margin-top: 32px;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+
+  /* The whole card is the link. A small "Open" button inside a big clickable
+     panel gives people two targets for one action and a reason to hesitate
+     about which is live. */
+  .system {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid var(--slate-200);
+    border-radius: 10px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .system:hover, .system:focus-visible {
+    transform: translateY(-3px);
+    border-color: var(--psa-300, #8aabdd);
+    box-shadow: 0 10px 24px -12px rgba(10, 31, 69, 0.35);
+  }
+  .system:focus-visible { outline: 3px solid var(--psa-700); outline-offset: 3px; }
+
+  /* Accent bar tells the two apart at a glance without relying on the
+     preview loading first. */
+  .accent { height: 4px; }
+  .system--rooms   .accent { background: var(--psa-700); }
+  .system--vehicle .accent { background: var(--psa-red); }
+
+  .preview {
+    position: relative;
+    aspect-ratio: 784 / 470;
+    background: var(--psa-50);
+    overflow: hidden;
+  }
+  .preview video,
+  .preview img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* The clip sits under the poster until it is actually playing, so a
+     half-buffered first frame never flashes. */
+  .preview video { opacity: 0; transition: opacity 0.25s ease; }
+  .preview.is-playing video { opacity: 1; }
+
+  .body { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
+  .system h2 { font-size: 17px; font-weight: 600; margin: 0; }
+  .system p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--slate-600); }
+
+  .open {
+    margin-top: auto;
+    padding-top: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--psa-700);
+  }
+  .system:hover .open, .system:focus-visible .open { text-decoration: underline; }
+
+  .host {
+    margin-top: 4px;
+    font-size: 11.5px;
+    color: #94a3b8;
+    word-break: break-all;
+  }
+
+  /* --- footer --- */
+  footer {
+    border-top: 1px solid var(--slate-200);
+    background: #fff;
+  }
+  .footer-inner {
+    max-width: 1040px; margin: 0 auto; padding: 18px 24px;
+    font-size: 12px; line-height: 1.6; color: var(--slate-600);
+  }
+
+  @media (max-width: 560px) {
+    .masthead img { height: 48px; }
+    .masthead .office { font-size: 16px; }
+    main { padding: 32px 20px 40px; }
+    h1 { font-size: 22px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .system { transition: none; }
+    .system:hover, .system:focus-visible { transform: none; }
+    .preview video { transition: none; }
+  }
+</style>
+</head>
+
+<body>
+  <header>
+    <div class="masthead">
+      <img src="assets/psa-logo.png" alt="Philippine Statistics Authority">
+      <div class="names">
+        <p class="agency">Philippine Statistics Authority</p>
+        <p class="office">Provincial Statistical Office, Laguna</p>
+      </div>
+      <img src="assets/bagong-pilipinas.png" alt="Bagong Pilipinas">
+    </div>
+    <div class="flag-rule"></div>
+  </header>
+
+  <main>
+    <h1>Office systems</h1>
+    <p class="lede">
+      Two booking systems for the provincial office. Choose the one you need —
+      you will sign in with your office email on either.
+    </p>
+
+    <div class="systems" id="systems">
+      <!-- Training room ------------------------------------------------->
+      <a class="system system--rooms" href="#" data-key="rooms">
+        <span class="accent"></span>
+        <span class="preview">
+          <img src="assets/rooms-poster.jpg" alt="" aria-hidden="true">
+          <video
+            src="assets/rooms.mp4"
+            poster="assets/rooms-poster.jpg"
+            muted loop playsinline preload="none" aria-hidden="true"></video>
+        </span>
+        <span class="body">
+          <h2>Training Room Reservation</h2>
+          <p>
+            Book Room 1, Room 2 or the Multi-Purpose Hall for trainings,
+            meetings and provincial activities. See what is already taken
+            before you pick a date.
+          </p>
+          <span class="open">Open the reservation system</span>
+          <span class="host" data-host></span>
+        </span>
+      </a>
+
+      <!-- Vehicle scheduling -------------------------------------------->
+      <a class="system system--vehicle" href="#" data-key="vehicle">
+        <span class="accent"></span>
+        <span class="preview">
+          <img src="assets/vehicle-poster.jpg" alt="" aria-hidden="true">
+          <video
+            src="assets/vehicle.mp4"
+            poster="assets/vehicle-poster.jpg"
+            muted loop playsinline preload="none" aria-hidden="true"></video>
+        </span>
+        <span class="body">
+          <h2>Vehicle Scheduling</h2>
+          <p>
+            Request an office vehicle for field work and official travel,
+            check what is available, and follow your request through to
+            approval.
+          </p>
+          <span class="open">Open the vehicle system</span>
+          <span class="host" data-host></span>
+        </span>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      PRIMEA Building, Maharlika Highway, San Pablo City, Laguna.
+      For office use. Both systems require a PSA account.
+    </div>
+  </footer>
+
+<script>
+/* =====================================================================
+   THE TWO ADDRESSES. This is the only thing on the page you need to edit.
+
+   Check both against what is actually deployed before this goes out — a
+   landing page whose links 404 is worse than no landing page. Include the
+   https:// on each.
+   ===================================================================== */
+const SYSTEMS = {
+  rooms:   "https://trainingroom-ten.vercel.app",
+  vehicle: "https://psa-vehicle-scheduling.vercel.app",
+};
+
+/* Wired from the map above rather than written into each href, so the two
+   addresses live in exactly one place. */
+document.querySelectorAll(".system").forEach((card) => {
+  const url = SYSTEMS[card.dataset.key];
+  if (!url) return;
+  card.href = url;
+
+  // Shows people where they are about to be sent. On a government portal
+  // that is worth the line of small text.
+  const host = card.querySelector("[data-host]");
+  if (host) host.textContent = new URL(url).host;
+});
+
+/* Previews play on hover or keyboard focus, not on load. Two clips
+   autoplaying the moment the page opens is motion nobody asked for and
+   data nobody agreed to spend — and on a phone it is both, twice. */
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+document.querySelectorAll(".system").forEach((card) => {
+  const wrap = card.querySelector(".preview");
+  const video = card.querySelector("video");
+  if (!wrap || !video) return;
+
+  const start = () => {
+    if (reduceMotion.matches) return;
+    // preload="none" means there is nothing buffered until now.
+    video.play().then(() => wrap.classList.add("is-playing")).catch(() => {
+      /* Autoplay refused, or the file is missing. The poster stays up,
+         which is a perfectly good card. */
+    });
+  };
+  const stop = () => {
+    wrap.classList.remove("is-playing");
+    video.pause();
+    video.currentTime = 0;
+  };
+
+  card.addEventListener("mouseenter", start);
+  card.addEventListener("mouseleave", stop);
+  card.addEventListener("focus", start);
+  card.addEventListener("blur", stop);
+});
+</script>
+</body>
+</html>
