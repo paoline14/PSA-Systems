@@ -270,6 +270,168 @@
   .stage h1 { color: #fff; }
   .stage .lede { color: rgba(255, 255, 255, 0.82); }
 
+
+  /* ------------------------------------------------------------------
+     3D gallery
+
+     Four systems is too many for a row of equal cards — at that width they
+     stop being panels and start being thumbnails. A coverflow puts one
+     system forward at full size and keeps the rest legible on either side,
+     so choosing stays a decision between two neighbours rather than a scan
+     across four.
+
+     Below 780px the 3D is dropped entirely and the cards stack. A rotated
+     card on a phone is a card you cannot read, and swiping past two systems
+     to reach the third is worse than scrolling.
+     ------------------------------------------------------------------ */
+  .gallery { margin-top: 28px; }
+  /* The group takes focus so the arrow keys have somewhere to land, but the
+     browser default ring is a black box on a blue field. */
+  .gallery:focus { outline: none; }
+  .gallery:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 10px;
+    border-radius: 14px;
+  }
+
+  .stage-3d {
+    position: relative;
+    /* Distance to the vanishing point. Shallower reads as a fish-eye, deeper
+       flattens the effect until it may as well be a fade. */
+    perspective: 1500px;
+    height: 470px;
+  }
+
+  .track {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: min(430px, 78vw);
+    height: 100%;
+    /* Every slide starts centred; the script displaces it from there, so the
+       -50% is folded into each transform rather than fought with. */
+    transform: translateX(-50%);
+    transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+                opacity 0.55s ease;
+    will-change: transform;
+  }
+  .slide .system { height: 100%; }
+
+  /* Only the card in front is clickable. A half-turned card behind it is a
+     target you cannot see properly, and clicking one by accident is how
+     people end up in the wrong system. */
+  .slide[data-pos="0"] { z-index: 4; }
+  .slide:not([data-pos="0"]) .system { pointer-events: none; }
+  .slide:not([data-pos="0"]) { cursor: pointer; }
+
+  /* The card behind is dimmed rather than blurred: blur on a 3D-transformed
+     element forces a repaint every frame on modest hardware. */
+  .slide[data-pos="1"], .slide[data-pos="-1"] { z-index: 3; opacity: 0.9; }
+  .slide[data-pos="2"], .slide[data-pos="-2"] { z-index: 2; opacity: 0.55; }
+  .slide[data-far] { z-index: 1; opacity: 0; pointer-events: none; }
+
+  /* --- controls --- */
+  .gallery-controls {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .g-btn {
+    width: 40px; height: 40px;
+    display: grid; place-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    cursor: pointer;
+    font-size: 17px; line-height: 1;
+    transition: background 0.18s ease, border-color 0.18s ease;
+  }
+  .g-btn:hover { background: rgba(255, 255, 255, 0.22); }
+  .g-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+  .dots { display: flex; gap: 9px; }
+  .dot {
+    width: 9px; height: 9px; padding: 0;
+    border: 0; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.38);
+    cursor: pointer;
+    transition: background 0.18s ease, transform 0.18s ease;
+  }
+  .dot[aria-current="true"] { background: #fff; transform: scale(1.35); }
+  .dot:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+  /* --- systems still being built --- */
+  .system--soon { cursor: default; }
+  .system--soon .preview::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: rgba(10, 31, 69, 0.45);
+  }
+  .badge-soon {
+    position: absolute;
+    top: 12px; left: 12px;
+    z-index: 2;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--psa-800);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .system--soon .open { color: var(--slate-600); }
+
+  /* Placeholder panel for a system with no artwork yet. Drawn rather than a
+     stock photo, so nobody mistakes it for a screenshot of something that
+     exists. */
+  .preview--art { display: grid; place-items: center; background: var(--psa-800); }
+  .preview--art svg { width: 62%; height: auto; }
+  .art-stroke { fill: none; stroke: var(--psa-200); stroke-width: 3;
+                stroke-linecap: round; stroke-linejoin: round; }
+  .art-thin   { fill: none; stroke: var(--psa-200); stroke-width: 1.5; opacity: 0.55; }
+  .art-fill   { fill: var(--psa-gold); }
+
+  .system--rooms     .accent { background: var(--psa-700); }
+  .system--vehicle   .accent { background: var(--psa-red); }
+  .system--hris      .accent { background: var(--psa-gold); }
+  .system--inventory .accent { background: var(--psa-600); }
+
+  @media (max-width: 1100px) { .stage-3d { height: 450px; } }
+  @media (max-width: 900px)  { .stage-3d { height: 430px; } }
+
+  /* Stack, no 3D. */
+  @media (max-width: 780px) {
+    .stage-3d { perspective: none; height: auto; }
+    .track {
+      position: static;
+      display: grid;
+      gap: 20px;
+    }
+    .slide {
+      position: static;
+      width: auto;
+      height: auto;
+      transform: none !important;
+      opacity: 1 !important;
+      transition: none;
+    }
+    .slide .system { height: auto; }
+    .slide:not([data-pos="0"]) .system { pointer-events: auto; }
+    .gallery-controls { display: none; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .system { transition: none; }
     .system:hover, .system:focus-visible { transform: none; }
@@ -277,6 +439,9 @@
     /* The backdrop stays, the movement does not. The script also checks this
        and never starts its loop. */
     .lightlines .lights { opacity: 0.35; }
+    /* The gallery still moves between cards, it just arrives instead of
+       gliding. */
+    .slide { transition: none; }
   }
 </style>
 </head>
@@ -354,13 +519,16 @@
   <main>
     <h1>Office systems</h1>
     <p class="lede">
-      Two booking systems for the provincial office. Choose the one you need —
-      you will sign in with your office email on either.
+      The provincial office&rsquo;s systems in one place. Browse them below —
+      the two that are open use your office email to sign in.
     </p>
 
-    <div class="systems" id="systems">
-      <!-- Training room ------------------------------------------------->
-      <a class="system system--rooms" href="#" data-key="rooms">
+    <div class="gallery" id="gallery" tabindex="0" role="group"
+         aria-label="Office systems — use the arrow keys to browse">
+      <div class="stage-3d">
+        <ul class="track">
+      <li class="slide">
+        <a class="system system--rooms" href="#" data-key="rooms">
         <span class="accent"></span>
         <span class="preview">
           <img src="assets/rooms-poster.jpg" alt="" aria-hidden="true">
@@ -380,9 +548,9 @@
           <span class="host" data-host></span>
         </span>
       </a>
-
-      <!-- Vehicle scheduling -------------------------------------------->
-      <a class="system system--vehicle" href="#" data-key="vehicle">
+      </li>
+      <li class="slide">
+        <a class="system system--vehicle" href="#" data-key="vehicle">
         <span class="accent"></span>
         <span class="preview">
           <img src="assets/vehicle-poster.jpg" alt="" aria-hidden="true">
@@ -402,6 +570,68 @@
           <span class="host" data-host></span>
         </span>
       </a>
+      </li>
+      <li class="slide">
+        <div class="system system--hris system--soon" data-key="hris">
+          <span class="accent"></span>
+          <span class="preview preview--art">
+            <span class="badge-soon">In development</span>
+            <!-- Drawn placeholder. There is no HRIS artwork yet, and putting
+                 another system's banner here would label the wrong picture. -->
+            <svg viewBox="0 0 240 144" role="img" aria-label="">
+              <rect x="30" y="26" width="180" height="92" rx="9" class="art-stroke"/>
+              <circle cx="74" cy="60" r="14" class="art-stroke"/>
+              <path d="M52 96c0-12 10-20 22-20s22 8 22 20" class="art-stroke"/>
+              <line x1="120" y1="52" x2="192" y2="52" class="art-thin"/>
+              <line x1="120" y1="68" x2="192" y2="68" class="art-thin"/>
+              <line x1="120" y1="84" x2="164" y2="84" class="art-thin"/>
+              <circle cx="192" cy="96" r="7" class="art-fill"/>
+            </svg>
+          </span>
+          <span class="body">
+            <h2>Human Resource Information System</h2>
+            <p>
+              Employee records, leave applications and service credits for
+              the provincial office, in one place instead of across a shared
+              drive.
+            </p>
+            <span class="open">Not open yet</span>
+            <span class="host">Being built</span>
+          </span>
+        </div>
+      </li>
+      <li class="slide">
+        <div class="system system--inventory system--soon" data-key="inventory">
+          <span class="accent"></span>
+          <span class="preview">
+            <span class="badge-soon">In development</span>
+            <img src="assets/inventory-poster.jpg" alt="" aria-hidden="true">
+          </span>
+          <span class="body">
+            <h2>PSA Inventory System</h2>
+            <p>
+              Track computers, tablets, printers and office supplies — what
+              the office holds, who is holding it, and what needs
+              replenishing.
+            </p>
+            <span class="open">Not open yet</span>
+            <span class="host">Being built</span>
+          </span>
+        </div>
+      </li>
+        </ul>
+      </div>
+
+      <div class="gallery-controls">
+        <button class="g-btn" type="button" data-prev aria-label="Previous system">&#8249;</button>
+        <div class="dots">
+          <button class="dot" type="button" aria-label="Show system 1"></button>
+          <button class="dot" type="button" aria-label="Show system 2"></button>
+          <button class="dot" type="button" aria-label="Show system 3"></button>
+          <button class="dot" type="button" aria-label="Show system 4"></button>
+        </div>
+        <button class="g-btn" type="button" data-next aria-label="Next system">&#8250;</button>
+      </div>
     </div>
   </main>
   </div>
@@ -409,7 +639,7 @@
   <footer>
     <div class="footer-inner">
       PRIMEA Building, Maharlika Highway, San Pablo City, Laguna.
-      For office use. Both systems require a PSA account.
+      For office use. The open systems require a PSA account.
     </div>
   </footer>
 
@@ -623,6 +853,121 @@ document.querySelectorAll(".system").forEach((card) => {
       }
     });
   }
+})();
+</script>
+
+<script>
+/* The 3D gallery.
+ *
+ * Positions are recomputed from one number — which slide is in front — rather
+ * than by mutating transforms as things move. That means the arrows, the dots,
+ * the keyboard, a click on a neighbour and a swipe all do exactly the same
+ * thing, and none of them can leave the row half-arranged.
+ */
+(function () {
+  var gallery = document.getElementById("gallery");
+  if (!gallery) return;
+
+  var slides = Array.prototype.slice.call(gallery.querySelectorAll(".slide"));
+  var dots = Array.prototype.slice.call(gallery.querySelectorAll(".dot"));
+  if (slides.length < 2) return;
+
+  var active = 0;
+  var n = slides.length;
+
+  // How far each ring sits back and turns. Past the second ring a card is
+  // hidden outright: at that angle it is a sliver, and a sliver that is still
+  // in the tab order is a trap for anyone on a keyboard.
+  var RINGS = [
+    { x: 0,   z: 0,    rot: 0 },
+    { x: 60,  z: -260, rot: 38 },
+    { x: 99,  z: -470, rot: 44 }
+  ];
+
+  function layout() {
+    for (var i = 0; i < n; i++) {
+      // Shortest way round the ring, so moving from the last card to the
+      // first travels one step forward rather than three back.
+      var offset = i - active;
+      if (offset > n / 2) offset -= n;
+      if (offset < -n / 2) offset += n;
+
+      var slide = slides[i];
+      var depth = Math.min(Math.abs(offset), RINGS.length - 1);
+      var ring = RINGS[depth];
+      var dir = offset < 0 ? -1 : 1;
+
+      slide.dataset.pos = String(offset);
+      if (Math.abs(offset) > 2) slide.dataset.far = "";
+      else delete slide.dataset.far;
+
+      slide.style.transform =
+        "translateX(calc(-50% + " + (ring.x * dir) + "%)) " +
+        "translateZ(" + ring.z + "px) " +
+        "rotateY(" + (-ring.rot * dir) + "deg)";
+
+      // Everything behind the front card is hidden from assistive tech and
+      // taken out of the tab order — it is decoration until it is chosen.
+      var card = slide.querySelector(".system");
+      if (card) {
+        if (offset === 0) {
+          card.removeAttribute("aria-hidden");
+          card.removeAttribute("tabindex");
+        } else {
+          card.setAttribute("aria-hidden", "true");
+          card.setAttribute("tabindex", "-1");
+        }
+      }
+    }
+
+    for (var d = 0; d < dots.length; d++) {
+      dots[d].setAttribute("aria-current", d === active ? "true" : "false");
+    }
+  }
+
+  function go(to) {
+    active = ((to % n) + n) % n;
+    layout();
+  }
+
+  gallery.querySelector("[data-prev]").addEventListener("click", function () {
+    go(active - 1);
+  });
+  gallery.querySelector("[data-next]").addEventListener("click", function () {
+    go(active + 1);
+  });
+
+  dots.forEach(function (dot, i) {
+    dot.addEventListener("click", function () { go(i); });
+  });
+
+  // Clicking a card at the side brings it forward instead of following it.
+  slides.forEach(function (slide, i) {
+    slide.addEventListener("click", function (e) {
+      if (i === active) return;
+      e.preventDefault();
+      go(i);
+    });
+  });
+
+  gallery.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowLeft") { e.preventDefault(); go(active - 1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); go(active + 1); }
+  });
+
+  // Swipe. Pointer events cover touch, pen and mouse-drag in one path.
+  var startX = null;
+  gallery.addEventListener("pointerdown", function (e) { startX = e.clientX; });
+  gallery.addEventListener("pointerup", function (e) {
+    if (startX === null) return;
+    var dx = e.clientX - startX;
+    startX = null;
+    // Below this it is a click, not a swipe.
+    if (Math.abs(dx) < 45) return;
+    go(active + (dx < 0 ? 1 : -1));
+  });
+
+  layout();
 })();
 </script>
 </body>

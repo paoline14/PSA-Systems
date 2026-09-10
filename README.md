@@ -95,6 +95,25 @@ illustration. To switch, point the room card's `<img>` at it and delete the
 - The time line reserves its height (`min-height: 1.4em`) and uses tabular
   figures, so nothing shifts when the script first fills it in and the line
   does not twitch as the seconds turn.
+- Four systems is too many for a row of equal cards; at that width they stop
+  being panels and become thumbnails. The gallery puts one forward at full size
+  and keeps the rest legible either side, so choosing stays a decision between
+  neighbours rather than a scan across four.
+- Every card position is recomputed from one number — which slide is in front.
+  The arrows, the dots, the keyboard, a click on a neighbour and a swipe all
+  set that number and nothing else, so none of them can leave the row
+  half-arranged.
+- Cards behind the front one are `aria-hidden` and out of the tab order. A
+  half-turned card is a target you cannot see properly, and clicking one by
+  accident is how somebody ends up in the wrong system. Clicking a side card
+  brings it forward instead of following its link.
+- Below 780px the 3D is dropped and the cards stack. A rotated card on a phone
+  is a card you cannot read, and swiping past two systems to reach the third is
+  worse than scrolling.
+- HRIS and Inventory carry an "In development" badge and no link. Inventory has
+  its supplied artwork; HRIS has a drawn placeholder, because there is no HRIS
+  artwork yet and putting another system's banner there would label the wrong
+  picture.
 - The animated backdrop is a port of a React/Tailwind component to plain CSS
   and one script. This page has neither React nor Tailwind, and pulling either
   in for a background would undo the point of it being one file that renders on
