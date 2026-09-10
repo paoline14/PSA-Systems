@@ -389,7 +389,10 @@
   }
   .badge-soon {
     position: absolute;
-    top: 12px; left: 12px;
+    /* Bottom-left, not top-left: both posters carry their wordmark across the
+       top, and a badge sitting on "HRIS" obscures the one thing the picture
+       is there to say. Down here it overlaps desk clutter instead. */
+    bottom: 12px; left: 12px;
     z-index: 2;
     padding: 5px 11px;
     border-radius: 999px;
@@ -405,15 +408,6 @@
      the cursor and then does nothing when clicked is a small broken promise. */
   .system--soon:hover { transform: none; box-shadow: none; border-color: var(--slate-200); }
 
-  /* Placeholder panel for a system with no artwork yet. Drawn rather than a
-     stock photo, so nobody mistakes it for a screenshot of something that
-     exists. */
-  .preview--art { display: grid; place-items: center; background: var(--psa-800); }
-  .preview--art svg { width: 62%; height: auto; }
-  .art-stroke { fill: none; stroke: var(--psa-200); stroke-width: 3;
-                stroke-linecap: round; stroke-linejoin: round; }
-  .art-thin   { fill: none; stroke: var(--psa-200); stroke-width: 1.5; opacity: 0.55; }
-  .art-fill   { fill: var(--psa-gold); }
 
   .system--rooms     .accent { background: var(--psa-700); }
   .system--vehicle   .accent { background: var(--psa-red); }
@@ -567,19 +561,9 @@
 
       <div class="system system--hris system--soon" data-key="hris">
           <span class="accent"></span>
-          <span class="preview preview--art">
+          <span class="preview">
             <span class="badge-soon">In development</span>
-            <!-- Drawn placeholder. There is no HRIS artwork yet, and putting
-                 another system's banner here would label the wrong picture. -->
-            <svg viewBox="0 0 240 144" role="img" aria-label="">
-              <rect x="30" y="26" width="180" height="92" rx="9" class="art-stroke"/>
-              <circle cx="74" cy="60" r="14" class="art-stroke"/>
-              <path d="M52 96c0-12 10-20 22-20s22 8 22 20" class="art-stroke"/>
-              <line x1="120" y1="52" x2="192" y2="52" class="art-thin"/>
-              <line x1="120" y1="68" x2="192" y2="68" class="art-thin"/>
-              <line x1="120" y1="84" x2="164" y2="84" class="art-thin"/>
-              <circle cx="192" cy="96" r="7" class="art-fill"/>
-            </svg>
+            <img src="assets/hris-poster.jpg" alt="" aria-hidden="true">
           </span>
           <span class="body">
             <h2>Human Resource Information System</h2>

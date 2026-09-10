@@ -117,9 +117,11 @@ illustration. To switch, point the room card's `<img>` at it and delete the
   needs, and a squeezed card is worse than a second row.
 - HRIS and Inventory carry an "In development" badge and no link, and they do
   not lift on hover — a card that rises under the cursor and then does nothing
-  when clicked is a small broken promise. Inventory has its supplied artwork;
-  HRIS has a drawn placeholder, because there is no HRIS artwork yet and putting
-  another system's banner there would label the wrong picture.
+  when clicked is a small broken promise. Both carry their own artwork, cropped
+  to the same 784:470 the other cards use.
+- The "In development" badge sits bottom-left. Both posters carry their wordmark
+  across the top, and a badge on "HRIS" obscures the one thing the picture is
+  there to say.
 - The animated backdrop is a port of a React/Tailwind component to plain CSS
   and one script. This page has neither React nor Tailwind, and pulling either
   in for a background would undo the point of it being one file that renders on
