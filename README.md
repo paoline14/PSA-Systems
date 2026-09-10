@@ -95,10 +95,15 @@ illustration. To switch, point the room card's `<img>` at it and delete the
 - The time line reserves its height (`min-height: 1.4em`) and uses tabular
   figures, so nothing shifts when the script first fills it in and the line
   does not twitch as the seconds turn.
-- Four systems sit two up and two down, on a fixed two-column grid rather than
-  `auto-fit`. At this container width `auto-fit` would drop the fourth card onto
-  a row of its own, which makes it read as an afterthought rather than one of
-  four.
+- The four systems sit in one row. Fixed columns rather than `auto-fit`: left
+  to itself the grid breaks three-and-one at some widths, and a lone card on its
+  own row reads as an afterthought rather than one of four.
+- The content column widened from 1040 to 1340 to fit them. The lede keeps its
+  own 58ch limit so the prose does not stretch with it, and the footer widened
+  to match so its line starts under the first card.
+- The row steps down 4 → 2 → 1 rather than shrinking to four thin columns.
+  Below about 1180px a quarter of the width is narrower than the card photo
+  needs, and a squeezed card is worse than a second row.
 - HRIS and Inventory carry an "In development" badge and no link, and they do
   not lift on hover — a card that rises under the cursor and then does nothing
   when clicked is a small broken promise. Inventory has its supplied artwork;
