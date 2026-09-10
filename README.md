@@ -77,7 +77,21 @@ illustration. To switch, point the room card's `<img>` at it and delete the
 - Keyboard: cards are focusable, focus ring is visible, and focus starts the
   preview the same way hover does.
 - `prefers-reduced-motion` suppresses the lift and the clips.
-- Both official marks sit either side of the office name rather than at the
-  outer edges of the header. The name block is not `flex: 1`, so the row
-  shrinks to its contents instead of stranding the second mark against the
-  far edge.
+- Both official marks sit either side of the office name, and the three
+  together form one `.letterhead` group. Keeping them grouped is what lets the
+  header be `justify-content: space-between` — the letterhead holds the left
+  edge, the clock the right — without the Bagong Pilipinas mark drifting into
+  the middle of the row.
+- The masthead is full width, unlike the cards below it, which stay boxed to
+  1040px. The letterhead is the office identifying itself and belongs at the
+  edge of the page; a centred container would leave both it and the clock
+  adrift in the middle of a wide monitor.
+- The clock is pinned to `Asia/Manila`, not the machine's own zone. An office
+  laptop left on a foreign timezone would otherwise show a confident, wrong
+  "Philippine Standard Time", which is worse than showing nothing. What it
+  displays is the *device* clock formatted for Manila — right to the second on
+  anything syncing time normally, but not an authoritative source. This page is
+  static, so there is no server to ask for the real time.
+- The time line reserves its height (`min-height: 1.4em`) and uses tabular
+  figures, so nothing shifts when the script first fills it in and the line
+  does not twitch as the seconds turn.

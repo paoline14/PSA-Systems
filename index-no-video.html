@@ -48,13 +48,25 @@
   /* --- masthead --- */
   header { background: #fff; border-bottom: 1px solid var(--slate-200); }
 
+  /* Full width rather than boxed to 1040 like the cards below. The letterhead
+     is the office identifying itself and belongs at the edge of the page; the
+     clock has to sit opposite it, and a centred container puts both adrift in
+     the middle of a wide monitor. */
   .masthead {
-    max-width: 1040px;
-    margin: 0 auto;
-    padding: 18px 24px;
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  /* The seal, the office name and the Bagong Pilipinas mark travel together.
+     Grouping them is what lets the row be space-between without the second
+     mark drifting into the middle. */
+  .masthead .letterhead {
     display: flex;
     align-items: center;
     gap: 16px;
+    min-width: 0;
   }
   .masthead img { height: 64px; width: auto; flex-shrink: 0; }
   .masthead .names { min-width: 0; }
@@ -64,6 +76,45 @@
   }
   .masthead .office {
     font-size: 19px; font-weight: 600; line-height: 1.2; margin: 0;
+  }
+
+  /* Philippine Standard Time. Black on white, no panel — the flag rule below
+     is meant to be the only ornament on the page, and a coloured box up here
+     would compete with it. */
+  .pst {
+    flex: none;
+    text-align: right;
+    line-height: 1.4;
+  }
+  .pst .pst-label {
+    margin: 0;
+    font-size: 12.5px;
+    color: #000;
+  }
+  .pst .pst-time {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    /* Fixed-width digits, so the line does not twitch as the seconds turn. */
+    font-variant-numeric: tabular-nums;
+    /* Holds the line before the clock first paints, so nothing below it jumps
+       when the script fills it in. */
+    min-height: 1.4em;
+  }
+
+  @media (max-width: 860px) {
+    .masthead { padding: 12px 20px; gap: 16px; }
+    .masthead img { height: 52px; }
+    .masthead .office { font-size: 16px; }
+    .pst .pst-label { font-size: 11px; }
+    .pst .pst-time  { font-size: 12px; }
+  }
+  /* Below this the two halves stop fitting side by side at all, so the clock
+     drops under the letterhead rather than squeezing it. */
+  @media (max-width: 620px) {
+    .masthead { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .pst { text-align: left; }
   }
 
   /* Blue, red, yellow in flag order. The only ornament on the page. */
@@ -194,12 +245,22 @@
 <body>
   <header>
     <div class="masthead">
-      <img src="assets/psa-logo.png" alt="Philippine Statistics Authority">
-      <div class="names">
-        <p class="agency">Philippine Statistics Authority</p>
-        <p class="office">Provincial Statistical Office, Laguna</p>
+      <div class="letterhead">
+        <img src="assets/psa-logo.png" alt="Philippine Statistics Authority">
+        <div class="names">
+          <p class="agency">Philippine Statistics Authority</p>
+          <p class="office">Provincial Statistical Office, Laguna</p>
+        </div>
+        <img src="assets/bagong-pilipinas.png" alt="Bagong Pilipinas">
       </div>
-      <img src="assets/bagong-pilipinas.png" alt="Bagong Pilipinas">
+
+      <div class="pst">
+        <p class="pst-label">Philippine Standard Time:</p>
+        <!-- Left empty in the markup and filled by script. A time written into
+             the HTML is already wrong by the time the page is opened, and this
+             page is static, so there is nothing to render it from anyway. -->
+        <p class="pst-time" id="pst-clock" aria-live="off"></p>
+      </div>
     </div>
     <div class="flag-rule"></div>
   </header>
@@ -305,6 +366,58 @@ document.querySelectorAll(".system").forEach((card) => {
 });
 
 /* No clips in this variant, so there is no playback to wire up. */
+</script>
+
+<script>
+/* Philippine Standard Time in the masthead.
+ *
+ * Pinned to Asia/Manila rather than the machine's own zone. An office laptop
+ * left on a foreign timezone would otherwise show a confident, wrong
+ * "Philippine Standard Time", which is worse than showing nothing.
+ *
+ * What this displays is the device clock formatted for Manila. On any machine
+ * syncing time normally that is right to the second, but it is not an
+ * authoritative source: a PC with a badly wrong clock will show a badly wrong
+ * time here. This page is static with no server to ask, so that is the honest
+ * limit of it.
+ */
+(function () {
+  var el = document.getElementById("pst-clock");
+  if (!el) return;
+
+  // Date and time formatted separately and joined with a comma. Asking one
+  // formatter for both yields "September 10, 2026 at 1:28:30 PM"; the wording
+  // on the PSA site is a comma, and matching it costs one extra object.
+  var dateFmt, timeFmt;
+  try {
+    dateFmt = new Intl.DateTimeFormat("en-PH", {
+      timeZone: "Asia/Manila",
+      weekday: "long", year: "numeric", month: "long", day: "numeric"
+    });
+    timeFmt = new Intl.DateTimeFormat("en-PH", {
+      timeZone: "Asia/Manila",
+      hour: "numeric", minute: "2-digit", second: "2-digit", hour12: true
+    });
+  } catch (e) {
+    // A browser too old for the timeZone option would silently fall back to
+    // local time and lie. Better to show nothing than the wrong hour.
+    return;
+  }
+
+  function tick() {
+    var now = new Date();
+    el.textContent = dateFmt.format(now) + ", " + timeFmt.format(now);
+  }
+
+  tick();
+
+  // Line up with the next whole second before ticking once a second, so the
+  // display does not sit a fraction of a second behind for the whole session.
+  setTimeout(function () {
+    tick();
+    setInterval(tick, 1000);
+  }, 1000 - (Date.now() % 1000));
+})();
 </script>
 </body>
 </html>
