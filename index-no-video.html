@@ -234,10 +234,65 @@
     h1 { font-size: 22px; }
   }
 
+
+  /* ------------------------------------------------------------------
+     Animated backdrop behind the cards.
+
+     Ported from a React/Tailwind component to plain CSS and one script,
+     because this page has neither React nor Tailwind and pulling either in
+     for a background would be a poor trade — the whole point of this page is
+     that it is one file that renders on an office machine with no internet.
+
+     The header and footer stay white. Only the middle band is painted, so
+     the letterhead and the clock keep their contrast and only the cards sit
+     against the blue.
+     ------------------------------------------------------------------ */
+  .stage {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* Lights travel a full viewBox height past each edge; without this they
+       would paint over the masthead on the way through. */
+    overflow: hidden;
+  }
+
+  .lightlines {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(180deg, var(--psa-800) 0%, var(--psa-600) 100%);
+  }
+  .lightlines svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Faint enough to read as texture rather than as content. */
+  .lightlines .lines { opacity: 0.05; }
+  .lightlines .line  { fill: #fff; }
+
+  .lightlines .lights { opacity: 0.9; }
+  .lightlines .light  { fill: #fff; }
+
+  /* The content rides above the backdrop. */
+  .stage > main { position: relative; z-index: 1; }
+
+  /* On the blue, the heading and lede have to change colour. The cards are
+     already white panels, so they need nothing. */
+  .stage h1 { color: #fff; }
+  .stage .lede { color: rgba(255, 255, 255, 0.82); }
+
   @media (prefers-reduced-motion: reduce) {
     .system { transition: none; }
     .system:hover, .system:focus-visible { transform: none; }
     .preview video { transition: none; }
+    /* The backdrop stays, the movement does not. The script also checks this
+       and never starts its loop. */
+    .lightlines .lights { opacity: 0.35; }
   }
 </style>
 </head>
@@ -264,6 +319,53 @@
     </div>
     <div class="flag-rule"></div>
   </header>
+
+  <div class="stage">
+    <!-- Animated backdrop. Purely decorative, so it is hidden from screen
+         readers and sits behind the content rather than wrapping it. -->
+    <div class="lightlines" aria-hidden="true">
+      <svg viewBox="0 0 1920 1080" preserveAspectRatio="none"
+           xmlns="http://www.w3.org/2000/svg">
+        <g class="lines">
+        <rect class="line" x="1253.6" width="4.5" height="1080"/>
+        <rect class="line" x="873.3" width="1.8" height="1080"/>
+        <rect class="line" x="1100" width="1.8" height="1080"/>
+        <rect class="line" x="1547.1" width="4.5" height="1080"/>
+        <rect class="line" x="615" width="4.5" height="1080"/>
+        <rect class="line" x="684.6" width="1.8" height="1080"/>
+        <rect class="line" x="1369.4" width="1.8" height="1080"/>
+        <rect class="line" x="1310.2" width="0.9" height="1080"/>
+        <rect class="line" x="1233.4" width="0.9" height="1080"/>
+        <rect class="line" x="124.2" width="0.9" height="1080"/>
+        <rect class="line" x="1818.4" width="4.5" height="1080"/>
+        <rect class="line" x="70.3" width="4.5" height="1080"/>
+        <rect class="line" x="1618.6" width="1.8" height="1080"/>
+        <rect class="line" x="455.9" width="1.8" height="1080"/>
+        <rect class="line" x="328.7" width="1.8" height="1080"/>
+        <rect class="line" x="300.8" width="4.6" height="1080"/>
+        <rect class="line" x="1666.4" width="0.9" height="1080"/>
+        </g>
+        <g class="lights">
+        <path class="light light1" d="M619.5,298.4H615v19.5h4.5V298.4z M619.5,674.8H615v9.8h4.5V674.8z M619.5,135.1H615v5.6h4.5V135.1z M619.5,55.5H615v68.7h4.5V55.5z"/>
+        <path class="light light2" d="M1258.2,531.9h-4.5v8.1h4.5V531.9z M1258.2,497.9h-4.5v17.9h4.5V497.9z M1258.2,0h-4.5v25.3h4.5V0z M1258.2,252.2h-4.5v42.4h4.5V252.2z"/>
+        <path class="light light3" d="M875.1,123.8h-1.8v4h1.8V123.8z M875.1,289.4h-1.8v24.1h1.8V289.4z M875.1,0h-1.8v31.4h1.8V0z M875.1,50.2h-1.8v11.5h1.8V50.2z"/>
+        <path class="light light4" d="M1101.8,983.8h-1.8v8.2h1.8V983.8z M1101.8,1075.9h-1.8v4.1h1.8V1075.9z M1101.8,873.7h-1.8v4.2h1.8V873.7z M1101.8,851h-1.8v18.2h1.8V851z"/>
+        <path class="light light5" d="M686.4,822.7h-1.8v3.8h1.8V822.7z M686.4,928.4h-1.8v23h1.8V928.4z M686.4,1043.8h-1.8v36.2h1.8V1043.8z"/>
+        <path class="light light6" d="M1551.6,860.9h-4.4v-34.1h4.4V860.9z M1551.6,533.5h-4.4v-13.9h4.4V533.5z M1551.6,1080h-4.4v-89.1h4.4V1080z"/>
+        <path class="light light7" d="M1311.1,707.7h-0.9V698h0.9V707.7z M1311.1,436.8h-0.9v-58.9h0.9V436.8z M1311.1,140.7h-0.9V48h0.9V140.7z"/>
+        <path class="light light8" d="M125.1,514.5h-0.9v-9.7h0.9V514.5z M125.1,243.6h-0.9v-58.9h0.9V243.6z"/>
+        <path class="light light9" d="M305.4,806.7h-4.6v-42.5h4.6V806.7z M305.4,398.5h-4.6v-17.3h4.6V398.5z M305.4,1080h-4.6V968.8h4.6V1080z"/>
+        <path class="light light10" d="M1822.9,170.7h-4.5v13.7h4.5V170.7z M1822.9,435.1h-4.5v6.8h4.5V435.1z M1822.9,55.9h-4.5v4h4.5V55.9z M1822.9,0h-4.5v48.3h4.5V0z"/>
+        <path class="light light11" d="M1666.4,331.5h0.9v9.7h-0.9V331.5z M1666.4,602.4h0.9v58.9h-0.9V602.4z M1666.4,898.5h0.9v92.7h-0.9V898.5z"/>
+        <path class="light light12" d="M1620.4,200.7h-1.8v6.4h1.8V200.7z M1620.4,469.1h-1.8v39h1.8V469.1z M1620.4,0h-1.8v51h1.8V0z M1620.4,81.3h-1.8V100h1.8V81.3z"/>
+        <path class="light light13" d="M74.8,201h-4.5v16.2h4.5V201z M74.8,512.3h-4.5v8.1h4.5V512.3z M74.8,65.8h-4.5v4.6h4.5V65.8z M74.8,0h-4.5v56.8h4.5V0z"/>
+        <path class="light light14" d="M1371.2,655.3h-1.8v6.3h1.8V655.3z M1371.2,829.7h-1.8v37.9h1.8V829.7z M1371.2,1020.3h-1.8v59.7h1.8V1020.3z"/>
+        <path class="light light15" d="M1234.3,898.1h-0.9v-4.9h0.9V898.1z M1234.3,762.5h-0.9v-29.5h0.9V762.5z M1234.3,614.4h-0.9v-46.4h0.9V614.4z"/>
+        <path class="light light16" d="M457.7,1010.8h-1.8v-18.1h1.8V1010.8z M457.7,507.5h-1.8V398h1.8V507.5z"/>
+        <path class="light light17" d="M330.5,170.7h-1.8v13.7h1.8V170.7z M330.5,435.1h-1.8v6.8h1.8V435.1z M330.5,55.9h-1.8v4h1.8V55.9z M330.5,0h-1.8v48.3h1.8V0z"/>
+        </g>
+      </svg>
+    </div>
 
   <main>
     <h1>Office systems</h1>
@@ -331,6 +433,7 @@
       </a>
     </div>
   </main>
+  </div>
 
   <footer>
     <div class="footer-inner">
@@ -417,6 +520,110 @@ document.querySelectorAll(".system").forEach((card) => {
     tick();
     setInterval(tick, 1000);
   }, 1000 - (Date.now() % 1000));
+})();
+</script>
+
+<script>
+/* The moving lights in the backdrop.
+ *
+ * Each light drifts the full height of the artwork, wraps, and starts again,
+ * on its own randomly chosen duration between roughly 1.5 and 30 seconds.
+ * The spread of speeds is what stops the group reading as one sheet sliding
+ * past.
+ *
+ * Three things keep it cheap. Only `transform` is touched, so the browser
+ * never re-lays-out. The loop stops entirely when the backdrop scrolls out of
+ * view or the tab is hidden. And it does not start at all for anyone who has
+ * asked for reduced motion — for them the lights are simply dimmer and still.
+ */
+(function () {
+  var root = document.querySelector(".lightlines");
+  if (!root) return;
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (reduce.matches) return;
+
+  // Down the page, and up it. Splitting them is the whole reason the field
+  // reads as depth rather than as a single scrolling texture.
+  var DOWN = [4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16];
+  var UP = [1, 2, 3, 9, 10, 17];
+
+  var TRAVEL = 1080; // one viewBox height
+
+  var lights = [];
+
+  function add(n, from, to) {
+    var el = root.querySelector(".light" + n);
+    if (!el) return;
+    lights.push({
+      el: el,
+      from: from,
+      to: to,
+      // 1.5s to about 30s, the same spread as the original.
+      duration: ((Math.floor(Math.random() * 59) + 2) * 0.5 + 0.5),
+      // Staggered so they are mid-flight on the first frame rather than all
+      // launching from the same edge together.
+      offset: Math.random()
+    });
+  }
+
+  DOWN.forEach(function (n) { add(n, -TRAVEL, TRAVEL); });
+  UP.forEach(function (n) { add(n, TRAVEL, -TRAVEL); });
+
+  if (!lights.length) return;
+
+  var running = false;
+  var frame = null;
+  var start = 0;
+
+  function draw(now) {
+    var elapsed = (now - start) / 1000;
+    for (var i = 0; i < lights.length; i++) {
+      var l = lights[i];
+      var progress = ((elapsed / l.duration) + l.offset) % 1;
+      var y = l.from + (l.to - l.from) * progress;
+      l.el.style.transform = "translateY(" + y.toFixed(2) + "px)";
+    }
+    frame = requestAnimationFrame(draw);
+  }
+
+  function play() {
+    if (running) return;
+    running = true;
+    start = performance.now();
+    frame = requestAnimationFrame(draw);
+  }
+
+  function pause() {
+    running = false;
+    if (frame) cancelAnimationFrame(frame);
+    frame = null;
+  }
+
+  // Off-screen or in a background tab, this costs nothing.
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      entries[0].isIntersecting && !document.hidden ? play() : pause();
+    }, { threshold: 0 }).observe(root);
+  } else {
+    play();
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    document.hidden ? pause() : play();
+  });
+
+  // Someone turning reduced motion on mid-session should be obeyed too.
+  if (reduce.addEventListener) {
+    reduce.addEventListener("change", function (e) {
+      if (e.matches) {
+        pause();
+        for (var i = 0; i < lights.length; i++) lights[i].el.style.transform = "";
+      } else {
+        play();
+      }
+    });
+  }
 })();
 </script>
 </body>

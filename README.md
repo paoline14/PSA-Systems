@@ -95,3 +95,14 @@ illustration. To switch, point the room card's `<img>` at it and delete the
 - The time line reserves its height (`min-height: 1.4em`) and uses tabular
   figures, so nothing shifts when the script first fills it in and the line
   does not twitch as the seconds turn.
+- The animated backdrop is a port of a React/Tailwind component to plain CSS
+  and one script. This page has neither React nor Tailwind, and pulling either
+  in for a background would undo the point of it being one file that renders on
+  an office machine with no internet.
+- It paints the middle band only. The masthead and footer stay white, so the
+  letterhead and the clock keep their contrast and only the cards sit against
+  the blue — which they already were, being white panels.
+- The lights move by `transform` alone, so nothing re-lays-out. The loop stops
+  when the backdrop scrolls out of view or the tab is hidden, and never starts
+  at all under `prefers-reduced-motion`, where the lights are simply dimmer and
+  still.
