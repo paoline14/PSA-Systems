@@ -9,6 +9,36 @@
 
 <style>
   /* ------------------------------------------------------------------
+     Trajan Pro, self-hosted.
+
+     The page deliberately used no webfont so it would render on an office
+     machine with no internet. Self-hosting keeps that: these two files ship
+     with the site and load from the same origin, so there is no third party
+     to reach and nothing to fail. 55KB and 34KB as woff2, from the supplied
+     .ttf and .otf.
+
+     Trajan has no lowercase — lowercase letters render as small capitals,
+     which is exactly how the official letterhead sets "Republic of the
+     Philippines". So the text is typed normally and the typeface does it.
+     ------------------------------------------------------------------ */
+  @font-face {
+    font-family: "Trajan Pro";
+    src: url("assets/fonts/TrajanPro-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    /* Show the fallback immediately rather than holding the masthead blank
+       while the font arrives. */
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Trajan Pro";
+    src: url("assets/fonts/TrajanPro-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* ------------------------------------------------------------------
      Same tokens as the two systems this page links to, so arriving at
      either one from here does not feel like leaving a different site.
      ------------------------------------------------------------------ */
@@ -68,14 +98,35 @@
     gap: 16px;
     min-width: 0;
   }
-  .masthead img { height: 64px; width: auto; flex-shrink: 0; }
+  .masthead img { height: 72px; width: auto; flex-shrink: 0; }
   .masthead .names { min-width: 0; }
+
+  /* Three lines, set the way the official letterhead sets them: a small
+     "Republic of the Philippines" over the agency name, with the office
+     underneath. All Trajan, so they read as one block rather than three
+     separate labels. */
+  .masthead .names p {
+    margin: 0;
+    font-family: "Trajan Pro", Georgia, "Times New Roman", serif;
+    color: var(--psa-800);
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+  .masthead .republic {
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+  }
   .masthead .agency {
-    font-size: 12px; font-weight: 500; color: var(--psa-600);
-    margin: 0 0 2px;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: 0.015em;
+    margin: 2px 0 1px !important;
   }
   .masthead .office {
-    font-size: 19px; font-weight: 600; line-height: 1.2; margin: 0;
+    font-size: 16.5px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
   }
 
   /* Philippine Standard Time. Black on white, no panel — the flag rule below
@@ -103,10 +154,20 @@
     min-height: 1.4em;
   }
 
+  @media (max-width: 1180px) {
+    .masthead .agency { font-size: 21px; }
+    .masthead .office { font-size: 13.5px; }
+    .masthead .republic { font-size: 11px; }
+    .masthead img { height: 58px; }
+  }
   @media (max-width: 860px) {
     .masthead { padding: 12px 20px; gap: 16px; }
-    .masthead img { height: 52px; }
-    .masthead .office { font-size: 16px; }
+    .masthead img { height: 50px; }
+    .masthead .agency { font-size: 17px; }
+    .masthead .office { font-size: 12px; }
+    .masthead .republic { font-size: 10px; }
+    /* The three lines stop fitting on one line each below this. */
+    .masthead .names p { white-space: normal; }
     .pst .pst-label { font-size: 11px; }
     .pst .pst-time  { font-size: 12px; }
   }
@@ -124,9 +185,12 @@
   }
 
   /* --- main --- */
-  /* Widened from 1040 so four cards fit across without becoming thumbnails.
-     The lede keeps its own 58ch limit, so the prose does not stretch with it. */
-  main { flex: 1; max-width: 1340px; width: 100%; margin: 0 auto; padding: 44px 24px 56px; }
+  /* Runs to the same edges as the masthead above it, so the row of systems
+     lines up with the letterhead instead of sitting in a narrower column of
+     its own. Capped, because on a very wide monitor four unbounded cards
+     become four billboards. The lede keeps its own 58ch limit, so the prose
+     does not stretch with the container. */
+  main { flex: 1; max-width: 1720px; width: 100%; margin: 0 auto; padding: 36px 32px 44px; }
 
   h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
   .lede { margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: var(--slate-600); max-width: 58ch; }
@@ -211,13 +275,12 @@
   .footer-inner {
     /* Matches main, so the footer line starts under the first card rather
        than floating in from somewhere else. */
-    max-width: 1340px; margin: 0 auto; padding: 18px 24px;
+    max-width: 1720px; margin: 0 auto; padding: 18px 32px;
     font-size: 12px; line-height: 1.6; color: var(--slate-600);
   }
 
   @media (max-width: 560px) {
-    .masthead img { height: 48px; }
-    .masthead .office { font-size: 16px; }
+    .masthead img { height: 44px; }
     main { padding: 32px 20px 40px; }
     h1 { font-size: 22px; }
   }
@@ -293,20 +356,13 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  @media (max-width: 1180px) {
+  @media (max-width: 1280px) {
     .systems { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
   }
   @media (max-width: 720px) {
     .systems { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   }
 
-  /* Four across leaves less room for the body text, so it tightens a little
-     rather than running to five and six lines. */
-  @media (min-width: 1181px) {
-    .system h2 { font-size: 16px; }
-    .system p  { font-size: 13px; }
-    .body { padding: 16px 18px 18px; }
-  }
 
   /* --- systems still being built --- */
   .system--soon { cursor: default; }
@@ -365,8 +421,9 @@
       <div class="letterhead">
         <img src="assets/psa-logo.png" alt="Philippine Statistics Authority">
         <div class="names">
+          <p class="republic">Republic of the Philippines</p>
           <p class="agency">Philippine Statistics Authority</p>
-          <p class="office">Provincial Statistical Office, Laguna</p>
+          <p class="office">Region IVA - CALABARZON</p>
         </div>
         <img src="assets/bagong-pilipinas.png" alt="Bagong Pilipinas">
       </div>

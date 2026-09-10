@@ -70,8 +70,16 @@ illustration. To switch, point the room card's `<img>` at it and delete the
 
 ## Notes
 
-- No webfont, matching both systems, so it renders on an office machine with
-  no internet.
+- Trajan Pro is self-hosted in `assets/fonts/`, not fetched from a font
+  service. That keeps the page working on an office machine with no internet:
+  the two woff2 files ship with the site and load from the same origin, so
+  there is no third party to reach and nothing to fail. 55KB and 34KB, from
+  the supplied .ttf and .otf.
+- Trajan has no lowercase — lowercase letters render as small capitals, which
+  is exactly how the official letterhead sets "Republic of the Philippines".
+  The text is typed normally and the typeface does the rest.
+- `font-display: swap` shows the fallback serif immediately rather than holding
+  the masthead blank while the font arrives.
 - The whole card is the link. A small button inside a large clickable panel
   gives two targets for one action.
 - Keyboard: cards are focusable, focus ring is visible, and focus starts the
@@ -98,11 +106,14 @@ illustration. To switch, point the room card's `<img>` at it and delete the
 - The four systems sit in one row. Fixed columns rather than `auto-fit`: left
   to itself the grid breaks three-and-one at some widths, and a lone card on its
   own row reads as an afterthought rather than one of four.
-- The content column widened from 1040 to 1340 to fit them. The lede keeps its
-  own 58ch limit so the prose does not stretch with it, and the footer widened
-  to match so its line starts under the first card.
+- The content column runs to the same edges as the masthead, so the row of
+  systems lines up with the letterhead instead of sitting in a narrower column
+  of its own. Capped at 1720px, because on a very wide monitor four unbounded
+  cards become four billboards. The lede keeps its own 58ch limit so the prose
+  does not stretch with the container, and the footer matches so its line
+  starts under the first card.
 - The row steps down 4 → 2 → 1 rather than shrinking to four thin columns.
-  Below about 1180px a quarter of the width is narrower than the card photo
+  Below about 1280px a quarter of the width is narrower than the card photo
   needs, and a squeezed card is worse than a second row.
 - HRIS and Inventory carry an "In development" badge and no link, and they do
   not lift on hover — a card that rises under the cursor and then does nothing
